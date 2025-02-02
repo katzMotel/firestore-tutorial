@@ -83,10 +83,10 @@ const logOut = ()=>{
     <p>Firestore Authentication </p>
     <div>
       <input type = "text" placeholder = "Email" value={email} onChange = {()=> setEmail(event.target.value)}/>
-      <input type ="password" placeholder= 'Password' value = {password}/>
+      <input type ="password" placeholder= 'Password' value = {password} onChange ={(event)=> setPassword(event.target.value)}/>
       <button onClick={signUp}> Sign Up </button>
       <button onClick={signIn}>Sign In</button>
-      <button onClick={signOut}>Sign Out</button>
+      <button onClick={logOut}>Sign Out</button>
     </div>
     {
       user && (
