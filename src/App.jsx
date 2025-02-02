@@ -4,7 +4,7 @@ import './App.css'
 import { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut , onAuthStateChanged} from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -24,27 +24,24 @@ const auth = getAuth(app);
 
 
 function App() {
-  const [name, setName]= useState();
   const [email, setEmail] =useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  useEffect(()=>{
-    async function testFirestore() {
-      const docRef = doc(db,"testCollection", "testDocument" );
-      const docSnap = await getDoc(docRef);
-      //Updates specific fields
-    await updateDoc(docRef,{
-      age: "55",
-      name: "BingBong"
-    })
-      if (docSnap.exists()){
-        setName(docSnap.data().name);
-      }else{
-        console.log("No such document.");
-      }
+
+  
+useEffect(()=>{
+  const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
+    if(currentUser){
+      //user is signed in
+      setUser(currentUser);
+    } else{
+      //user is signed out
+      setUser(null);
     }
-    testFirestore();
-  },[]);
+  })
+  return () => unsubscribe();
+})
+
 //Sign up
 const signUp =()=>{
   createUserWithEmailAndPassword(auth, email, password)
@@ -82,16 +79,24 @@ const logOut = ()=>{
     <>
     <p>Firestore Authentication </p>
     <div>
-      <input type = "text" placeholder = "Email" value={email} onChange = {()=> setEmail(event.target.value)}/>
-      <input type ="password" placeholder= 'Password' value = {password} onChange ={(event)=> setPassword(event.target.value)}/>
-      <button onClick={signUp}> Sign Up </button>
-      <button onClick={signIn}>Sign In</button>
-      <button onClick={logOut}>Sign Out</button>
+      
+      {
+        !user && (
+          <>
+          <input type = "text" placeholder = "Email" value={email} onChange = {()=> setEmail(event.target.value)}/>
+          <input type ="password" placeholder= 'Password' value = {password} onChange ={(event)=> setPassword(event.target.value)}/>
+            <button onClick={signUp}> Sign Up </button>
+            <button onClick={signIn}>Sign In</button>
+          </>
+        )
+      }
+     
     </div>
     {
       user && (
         <div>
           <p>Logged in as: {user.email}</p>
+          <button onClick={logOut}>Sign Out</button>
         </div>
       )
     }
