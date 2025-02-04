@@ -1,24 +1,9 @@
-import ParentComponent from './components/ParentComponent';
 
 import './App.css'
 import { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut , onAuthStateChanged} from 'firebase/auth';
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
-//initialize firebase
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+import { createUserWithEmailAndPassword,  signInWithEmailAndPassword, signOut , onAuthStateChanged} from 'firebase/auth';
+import{db, app, auth} from './lib/firebase';
+import Todo  from './components/Todo';
 
 
 
@@ -94,7 +79,9 @@ const logOut = ()=>{
     </div>
     {
       user && (
+        
         <div>
+         <Todo />
           <p>Logged in as: {user.email}</p>
           <button onClick={logOut}>Sign Out</button>
         </div>
